@@ -1,8 +1,25 @@
+//buy prices and times from APIs
+var coinbaseBuy;
+var coinbaseTime;
+var krakenBuy;
+var krakenTime;
+var geminiBuy;
+var geminiTime;
+
+//sell prices and times from APIs
+var zebpaySell;
+var zebpayTime;
+var unocoinSell;
+var unocoinTime;
+var coinsecureSell;
+var coinsecureTime;
+
 $(document).ready(function() {
     window.setInterval(function() {
         //in here, get buy price (sometimes called 'lowest Ask') and 
         //sell price ('highest bid') from relevant APIs using OAuth if necessary
         //and get time from API usually as field "unixtime" in response JSON object
+        //store this data in relevant variables at top of this file
         //load results into relevant HTML elements
 
         // function success(data){
@@ -29,4 +46,5 @@ $(document).ready(function() {
 
 $("button").click(function(){
     //export to spreadsheet code here
+    //export the data from the vars at the top of this file into a .csv(or .xls if there's an easy way to it) file
 });
