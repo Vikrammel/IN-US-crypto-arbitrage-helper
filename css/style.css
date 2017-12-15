@@ -10,13 +10,13 @@ h1{
 .button {
     display: inline-block;
     border-radius: 4px;
-    background-color: #f4511e;
+    background-color: #70a0ff;
     border: none;
     color: #FFFFFF;
     text-align: center;
     font-size: 18px;
-    padding: 20px;
-    width: 250px;
+    padding: 5px;
+    width: 220px;
     transition: all 0.5s;
     cursor: pointer;
     margin: 0 auto;
@@ -38,6 +38,10 @@ h1{
     transition: 0.5s;
 }
   
+.button:hover {
+    background-color: #4284ff;    
+}
+
 .button:hover span {
     padding-right: 25px;
 }
