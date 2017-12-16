@@ -32,11 +32,36 @@ $(document).ready(function() {
         //     success: success(data),
         //     dataType: jsonp
         //   });
-          
-        $("#coinbaseBuy").html("test");
-        // $("#coinbaseBuy").html();
-        // $("#krakenBuy").html(get("https://api.kraken.com/0/public/Ticker", [BTC-USD]));
-        // $("#coinbaseBuy").html(get("https://api.gemini.com/v1/pubticker/btcusd"));
+        
+        $.ajax({
+            type: 'GET',
+            url: ' https://api.gdax.com/products/BTC-USD/ticker',
+            dataType: 'json',
+            success: function(data){
+                coinbaseBuy = data.ask;
+                coinbaseTime = data.time;
+            }
+        });
+        $("#coinbaseBuy").html(coinbaseBuy);
+        $("#coinbaseDateTime").html(coinbaseTime);
+
+        $.ajax({
+            type: 'GET',
+            url: 'https://api.kraken.com/0/public/Ticker?pair=BTCUSD',
+            dataType: 'json',
+            success: function(data){
+                krakenBuy = data.a[0];
+                $.ajax({
+                    type: 'GET',
+                    url: 'https://api.kraken.com/0/public/Time',
+                    success: function(data){
+                        krakenTime = data;
+                    }
+                });
+            }
+        });
+        $("#krakenBuy").html(krakenBuy);
+        $("#krakenDateTime").html(krakenTine);
 
         // $("#zebpaySell").html(get("https://www.zebapi.com/api/v1/market/ticker/btc/inr"));
         // $("#unocoinSell").html(get("https://www.unocoin.com/trade.php?sell"));
