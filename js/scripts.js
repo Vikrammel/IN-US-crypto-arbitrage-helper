@@ -27,7 +27,7 @@ $(document).ready(function() {
             url: 'https://api.gdax.com/products/BTC-USD/ticker',
             dataType: 'json',
             success: function(data){
-                coinbaseBuy = data.ask;
+                coinbaseBuy = "$" + data.ask;
                 coinbaseTime = data.time;
             }
         });
@@ -44,7 +44,7 @@ $(document).ready(function() {
                     krakenBuy = "errors retrieving price from kraken";
                 }
                 else{
-                    krakenBuy = result.XXBTZUSD.a[0];                   
+                    krakenBuy = "$" + result.XXBTZUSD.a[0];                   
                 }
                 $.ajax({
                     type: 'GET',
@@ -76,20 +76,72 @@ $(document).ready(function() {
             // data: {},
             success: function(data){
                 console.log("in gemini success function");
-                geminiBuy = data.ask;
+                geminiBuy = "$" + data.ask;
                 geminiTime = data.volume.timestamp;
             },
             error: function(){
                 geminiBuy = "gemini price GET error";
-                geminiTime= "gemini time GET error";
+                geminiTime = "gemini time GET error";
             }
         });
         $("#geminiBuy").html(geminiBuy);
         $("#geminiDateTime").html(geminiTime);
 
-        // $("#zebpaySell").html(get("https://www.zebapi.com/api/v1/market/ticker/btc/inr"));
-        // $("#unocoinSell").html(get("https://www.unocoin.com/trade.php?sell"));
-        // $("#coinsecureSell").html(get("https://api.coinsecure.in/v1/exchange/bid/high"));
+        $.ajax({
+            type: 'GET',
+            url: 'https://www.zebapi.com/api/v1/market/ticker/btc/inr',
+            dataType: 'json',
+            // data: {},
+            success: function(data){
+                //console.log("in zebpay success function");
+                zebpaySell = "Rs." + data.sell;
+                var d = new Date();
+                zebpayTime = d;
+            },
+            error: function(){
+                zebpayBuy = "zebpay price GET error";
+                zebpayTime = "zebpay time GET error";
+            }
+        });
+        $("#zebpaySell").html(zebpaySell);
+        $("#zebpayDateTime").html(zebpayTime);
+
+        $.ajax({
+            type: 'GET',
+            url: 'https://www.unocoin.com/trade?sell',
+            //dataType: 'json',
+            // data: {},
+            success: function(data){
+                //console.log("in zebpay success function");
+                unocoinSell = "Rs." + data;
+                var d = new Date();
+                unocoinTime = d;
+            },
+            error: function(){
+                unocoinSell = "unocoin price GET error";
+                unocoinTime = "unocoin time GET error";
+            }
+        });
+        $("#unocoinSell").html(unocoinSell);
+        $("#unocoinDateTime").html(unocoinTime);
+        
+        $.ajax({
+            type: 'GET',
+            url: 'https://api.coinsecure.in/v1/exchange/bid/high',
+            //dataType: 'json',
+            // data: {},
+            success: function(data){
+                //console.log("in zebpay success function");
+                coinsecureSell = "Rs." + data.message.rate;
+                coinsecureTime = data.time;
+            },
+            error: function(){
+                coinsecureSell = "coinsecure price GET error";
+                coinsecureTime = "coinsecure time GET error";
+            }
+        });
+        $("#coinsecureSell").html(coinsecureSell);
+        $("#coinsecureDateTime").html(coinsecureTime);
     }, 120);
 });
 
