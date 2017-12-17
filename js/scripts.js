@@ -21,21 +21,10 @@ $(document).ready(function() {
         //and get time from API usually as field "unixtime" in response JSON object
         //store this data in relevant variables at top of this file
         //load results into relevant HTML elements
-
-        // function success(data){
-        //     console.log(data.amount);
-        // }
-        // $.ajax({
-        //     url: "https://api.coinbase.com/v2/prices/BTC-USD/buy",
-        //     // authorization: 'Bearer',
-        //     data: 'Bearer',
-        //     success: success(data),
-        //     dataType: jsonp
-        //   });
         
         $.ajax({
             type: 'GET',
-            url: ' https://api.gdax.com/products/BTC-USD/ticker',
+            url: 'https://api.gdax.com/products/BTC-USD/ticker',
             dataType: 'json',
             success: function(data){
                 coinbaseBuy = data.ask;
@@ -47,26 +36,61 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'GET',
-            url: 'https://api.kraken.com/0/public/Ticker?pair=BTCUSD',
+            url: 'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD',
             dataType: 'json',
-            success: function(data){
-                krakenBuy = data.a[0];
+            success: function(error, result){
+                // console.log("SUCCESSS!!!! in kraken buy success function");
+                if (length(error)>0){
+                    krakenBuy = "errors retrieving price from kraken";
+                }
+                else{
+                    krakenBuy = result.XXBTZUSD.a[0];                   
+                }
                 $.ajax({
                     type: 'GET',
                     url: 'https://api.kraken.com/0/public/Time',
-                    success: function(data){
-                        krakenTime = data;
+                    dataType: 'json',
+                    success: function(error, result){
+                        if (length(error)>0){
+                            krakenTime = "errors retrieving time from kraken";
+                        }
+                        else{
+                            krakenTime = result.rfc1123;
+                        }
                     }
                 });
+            },
+            error: function(){
+                //going in here. maybe not supplying necessary data with request?
+                krakenBuy = 'kraken price GET error';
+                krakenTime = 'kraken time GET error';
             }
         });
         $("#krakenBuy").html(krakenBuy);
-        $("#krakenDateTime").html(krakenTine);
+        $("#krakenDateTime").html(krakenTime);
+
+        $.ajax({
+            type: 'GET',
+            url: 'https://api.gemini.com/v1/pubticker/btcusd',
+            dataType: 'json',
+            // data: {},
+            success: function(data){
+                console.log("in gemini success function");
+                geminiBuy = data.ask;
+                geminiTime = data.volume.timestamp;
+            },
+            error: function(){
+                geminiBuy = "gemini price GET error";
+                geminiTime= "gemini time GET error";
+            }
+        });
+        $("#geminiBuy").html(geminiBuy);
+        $("#geminiDateTime").html(geminiTime);
 
         // $("#zebpaySell").html(get("https://www.zebapi.com/api/v1/market/ticker/btc/inr"));
         // $("#unocoinSell").html(get("https://www.unocoin.com/trade.php?sell"));
         // $("#coinsecureSell").html(get("https://api.coinsecure.in/v1/exchange/bid/high"));
-    }, 60);
+    }, 120);
 });
 
 $("button").click(function(){
