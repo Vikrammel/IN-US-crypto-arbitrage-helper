@@ -1,4 +1,5 @@
 //scripts.js
+
 var buyPrices = {}; //dictionary of buy prices
 var sellPrices = {}; //dictionary of sell prices
 var times = {}; //dictionary of server times (or local time substitutes)
@@ -7,7 +8,7 @@ var exportClicked = false; //track if user has clicked export button
 //functions to define behavior in the case of success/failure of specific requests
 function coinbaseSuccess(responseData){
     buyPrices.coinbaseBuy = "$" + responseData.ask;
-    times.coinbaseTime = responseData.time;
+    times.coinbaseTime = new Date(responseData.time);
 }
 
 function coinbaseError(){
@@ -16,7 +17,7 @@ function coinbaseError(){
 }
 
 function krakenPriceSuccess(responseData){
-    if (length(responseData.error)>0){
+    if (responseData.error.length > 0){
         buyPrices.krakenBuy = "errors retrieving price from kraken";
     }
     else{
@@ -29,22 +30,32 @@ function krakenPriceError(){
 }
 
 function krakenTimeSuccess(responseData){
-    if (length(responseData.error)>0){
+    if (responseData.error.length > 0){
         times.krakenTime = "errors retrieving time from kraken";
     }
     else{
-        times.krakenTime = responseData.result.rfc1123;
+        var krakenEpochSecs = responseData.result.unixtime;
+        // convert from unixtime to rfc1123    
+        var d = new Date(0); // make new date with epoch seconds = 0
+        d.setUTCSeconds(krakenEpochSecs); //add kraken epoch secs
+        times.krakenTime = d;
     }
 }
 
 function krakenTimeError(){
-    times.krakenTime = "kraken time GET error";
+    // some reason some kraken time GET calls get in here, 
+    // commenting out so it doesn't update old valid times with an error string, 
+    // instead indicate time is old
+    times.krakenTime += " (timestamp stale)";
 }
 
 function geminiSuccess(responseData){
     buyPrices.geminiBuy = "$" + responseData.ask;
-    times.geminiTime = responseData.volume.timestamp;
-    //TODO: convert geminiTime from unixtime to rfc1123
+    var geminiEpochMs = responseData.volume.timestamp; //num milisecs after epoch from gemini
+    // convert from unixtime to rfc1123    
+    var d = new Date(0); // make new date with epoch miliseconds = 0
+    d.setUTCMilliseconds(geminiEpochMs); //add gemini epoch ms
+    times.geminiTime = d;
 }
 
 function geminiError(){
@@ -87,10 +98,12 @@ function coinsecureError(){
 }
 
 //wrapper for ajax request so enchance readability in the $(document).ready() function
-function callExchangeApi(type, url, dataType, success, error){
+function callExchangeApi(type, url, headers, dataType, success, error){
     return $.ajax({
         type: type,
         url: url,
+        headers: headers,
+        crossDomain: true,
         //data:{},
         dataType: dataType,
         success: success,
@@ -107,51 +120,51 @@ $(document).ready(function() {
         //load results into relevant HTML elements
 
         var coinbaseCall = callExchangeApi('GET', 'https://api.gdax.com/products/BTC-USD/ticker', 
-            'json', coinbaseSuccess, coinbaseError);
+            {}, 'json', coinbaseSuccess, coinbaseError);
         coinbaseCall.always(function(){
             //write to html objects after call finishes (success or error)
             $("#coinbaseBuy").html(buyPrices.coinbaseBuy);
             $("#coinbaseDateTime").html(times.coinbaseTime);
         });
         
-        var krakenPriceCall = callExchangeApi('GET', 'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD', 
-            'json', krakenPriceSuccess, krakenPriceError);
+        var krakenPriceCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD', 
+            {'Access-Control-Allow-Origin': '*'}, 'json', krakenPriceSuccess, krakenPriceError);
         krakenPriceCall.always(function(){
             $("#krakenBuy").html(buyPrices.krakenBuy);
-            var krakenTimeCall = callExchangeApi('GET', 'https://api.kraken.com/0/public/Time', 
-                'json', krakenTimeSuccess, krakenTimeError);
+            var krakenTimeCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://api.kraken.com/0/public/Time', 
+                {'Access-Control-Allow-Origin': '*'}, 'json', krakenTimeSuccess, krakenTimeError);
             krakenTimeCall.always(function(){
                 $("#krakenDateTime").html(times.krakenTime);
             });
         });
 
-        var geminiCall = callExchangeApi('GET', 'https://api.gemini.com/v1/pubticker/btcusd', 
-            'json', geminiSuccess, geminiError);
+        var geminiCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://api.gemini.com/v1/pubticker/btcusd', 
+            {'Access-Control-Allow-Origin': '*'}, 'json', geminiSuccess, geminiError);
         geminiCall.always(function(){
             $("#geminiBuy").html(buyPrices.geminiBuy);
             $("#geminiDateTime").html(times.geminiTime);
         });
 
         var zebpayCall = callExchangeApi('GET', 'https://www.zebapi.com/api/v1/market/ticker/btc/inr', 
-            'json', zebpaySuccess, zebpayError);
+            {}, 'json', zebpaySuccess, zebpayError);
         zebpayCall.always(function(){
             $("#zebpaySell").html(sellPrices.zebpaySell);
             $("#zebpayDateTime").html(times.zebpayTime);
         });
 
-        var unocoinCall = callExchangeApi('GET', 'https://www.unocoin.com/trade?sell', 
-            '', unocoinSuccess, unocoinError);
-        unocoinCall.always(function(){
-            $("#unocoinSell").html(sellPrices.unocoinSell);
-            $("#unocoinDateTime").html(times.unocoinTime);
-        });
+        // var unocoinCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://www.unocoin.com/trade?sell', 
+        //     {'Access-Control-Allow-Origin': '*'}, '', unocoinSuccess, unocoinError);
+        // unocoinCall.always(function(){
+        //     $("#unocoinSell").html(sellPrices.unocoinSell);
+        //     $("#unocoinDateTime").html(times.unocoinTime);
+        // });
         
-        var coinsecureCall = callExchangeApi('GET', 'https://api.coinsecure.in/v1/exchange/bid/high', 
-            '', coinsecureSuccess, coinsecureError);
-        coinsecureCall.always(function(){
-            $("#coinsecureSell").html(sellPrices.coinsecureSell);
-            $("#coinsecureDateTime").html(times.coinsecureTime);
-        });
+        // var coinsecureCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://api.coinsecure.in/v1/exchange/bid/high', 
+        //     {'Access-Control-Allow-Origin': '*'}, '', coinsecureSuccess, coinsecureError);
+        // coinsecureCall.always(function(){
+        //     $("#coinsecureSell").html(sellPrices.coinsecureSell);
+        //     $("#coinsecureDateTime").html(times.coinsecureTime);
+        // });
 
     }, 120);
 });
