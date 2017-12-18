@@ -4,90 +4,8 @@ var sellPrices = {}; //dictionary of sell prices
 var times = {}; //dictionary of server times (or local time substitutes)
 var exportClicked = false; //track if user has clicked export button
 
-//functions to define behavior in the case of success/failure of specific requests
-function coinbaseSuccess(responseData){
-    buyPrices.coinbaseBuy = "$" + responseData.ask;
-    times.coinbaseTime = responseData.time;
-}
-
-function coinbaseError(){
-    buyPrices.coinbaseBuy = "coinbase price GET error";
-    times.coinbaseTime = "coinbase time GET error";
-}
-
-function krakenPriceSuccess(responseData){
-    if (length(responseData.error)>0){
-        buyPrices.krakenBuy = "errors retrieving price from kraken";
-    }
-    else{
-        buyPrices.krakenBuy = "$" + responseData.result.XXBTZUSD.a[0];                   
-    }
-}
-
-function krakenPriceError(){
-    buyPrices.krakenBuy = "kraken price GET error";
-}
-
-function krakenTimeSuccess(responseData){
-    if (length(responseData.error)>0){
-        times.krakenTime = "errors retrieving time from kraken";
-    }
-    else{
-        times.krakenTime = responseData.result.rfc1123;
-    }
-}
-
-function krakenTimeError(){
-    times.krakenTime = "kraken time GET error";
-}
-
-function geminiSuccess(responseData){
-    buyPrices.geminiBuy = "$" + responseData.ask;
-    times.geminiTime = responseData.volume.timestamp;
-    //TODO: convert geminiTime from unixtime to rfc1123
-}
-
-function geminiError(){
-    buyPrices.geminiBuy = "gemini price GET error";
-    times.geminiTime = "gemini time GET error";
-}
-
-function zebpaySuccess(responseData){
-    sellPrices.zebpaySell = "Rs." + responseData.sell;
-    var d = new Date();
-    times.zebpayTime = d;
-}
-
-function zebpayError(){
-    sellPrices.zebpaySell = "zebpay price GET error";
-    times.zebpayTime = "zebpay time GET error";
-}
-
-function unocoinSuccess(responseData){
-    sellPrices.unocoinSell = "Rs." + responseData;
-    var d = new Date();
-    times.unocoinTime = d;
-}
-
-function unocoinError(){
-    sellPrices.unocoinSell = "unocoin price GET error";
-    times.unocoinTime = "unocoin time GET error";
-}
-
-function coinsecureSuccess(responseData){
-    //divide rate by 100, last 2 digits are paise
-    sellPrices.coinsecureSell = "Rs." + float(data.message.rate)/100.00;
-    times.coinsecureTime = data.time;
-    //TODO: convert to rfc1123
-}
-
-function coinsecureError(){
-    sellPrices.coinsecureSell = "coinsecure price GET error";
-    times.coinsecureTime = "coinsecure time GET error";
-}
-
 //wrapper for ajax request so enchance readability in the $(document).ready() function
-function callExchangeApi(type, url, dataType, success, error){
+function callExchangeApi(type, url, dataType, success, error) {
     return $.ajax({
         type: type,
         url: url,
@@ -98,72 +16,102 @@ function callExchangeApi(type, url, dataType, success, error){
     });
 }
 
-$(document).ready(function() {
-    window.setInterval(function() {
-        //in here, get buy price (sometimes called 'lowest Ask') and 
-        //sell price ('highest bid') from relevant APIs
-        //and get time from API usually as field "unixtime" in response JSON object
-        //store this data in relevant variables at top of this file
-        //load results into relevant HTML elements
+$(document).ready(function () {
 
-        var coinbaseCall = callExchangeApi('GET', 'https://api.gdax.com/products/BTC-USD/ticker', 
+    //in here, get buy price (sometimes called 'lowest Ask') and 
+    //sell price ('highest bid') from relevant APIs
+    //and get time from API usually as field "unixtime" in response JSON object
+    //store this data in relevant variables at top of this file
+    //load results into relevant HTML elements
+    function getApiData() {
+        var coinbaseCall = callExchangeApi('GET', 'https://api.gdax.com/products/BTC-USD/ticker',
             'json', coinbaseSuccess, coinbaseError);
-        coinbaseCall.always(function(){
+        coinbaseCall.done(function () {
             //write to html objects after call finishes (success or error)
             $("#coinbaseBuy").html(buyPrices.coinbaseBuy);
             $("#coinbaseDateTime").html(times.coinbaseTime);
         });
-        
-        var krakenPriceCall = callExchangeApi('GET', 'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD', 
-            'json', krakenPriceSuccess, krakenPriceError);
-        krakenPriceCall.always(function(){
-            $("#krakenBuy").html(buyPrices.krakenBuy);
-            var krakenTimeCall = callExchangeApi('GET', 'https://api.kraken.com/0/public/Time', 
-                'json', krakenTimeSuccess, krakenTimeError);
-            krakenTimeCall.always(function(){
-                $("#krakenDateTime").html(times.krakenTime);
-            });
+        coinbaseCall.fail(function () {
+            $("#coinbaseBuy").html("Error getting Coinbase price data.");
+            $("#coinbaseDateTime").html("Error getting Coinbase timestamp.");
         });
 
-        var geminiCall = callExchangeApi('GET', 'https://api.gemini.com/v1/pubticker/btcusd', 
+        var krakenPriceCall = callExchangeApi('GET', 'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD',
+            'json', krakenPriceSuccess, krakenPriceError);
+        krakenPriceCall.done(function () {
+            $("#krakenBuy").html(buyPrices.krakenBuy);
+        });
+        krakenPriceCall.fail(function () {
+            $("#krakenBuy").html("Error getting Kraken price data.");
+            $("#krakenDateTime").html("Error getting Kraken timestamp.");
+        });
+
+        var krakenTimeCall = callExchangeApi('GET', 'https://api.kraken.com/0/public/Time',
+            'json', krakenTimeSuccess, krakenTimeError);
+        krakenTimeCall.done(function () {
+            $("#krakenDateTime").html(times.krakenTime);
+        });
+        krakenTimeCall.fail(function () {
+            $("#krakenDateTime").html("Error getting Kraken timestamp.");
+        });
+
+        var geminiCall = callExchangeApi('GET', 'https://api.gemini.com/v1/pubticker/btcusd',
             'json', geminiSuccess, geminiError);
-        geminiCall.always(function(){
+        geminiCall.done(function () {
             $("#geminiBuy").html(buyPrices.geminiBuy);
             $("#geminiDateTime").html(times.geminiTime);
         });
+        geminiCall.fail(function () {
+            $("#geminiBuy").html("Error getting Gemini price data.");
+            $("#geminiDateTime").html("Error getting Gemini timestamp.");
+        });
 
-        var zebpayCall = callExchangeApi('GET', 'https://www.zebapi.com/api/v1/market/ticker/btc/inr', 
+        var zebpayCall = callExchangeApi('GET', 'https://www.zebapi.com/api/v1/market/ticker/btc/inr',
             'json', zebpaySuccess, zebpayError);
-        zebpayCall.always(function(){
+        zebpayCall.done(function () {
             $("#zebpaySell").html(sellPrices.zebpaySell);
             $("#zebpayDateTime").html(times.zebpayTime);
         });
+        zebpayCall.fail(function () {
+            $("#zebpaySell").html("Error getting Zebpay data.");
+            $("#zebpayDateTime").html("Error getting Zebpay timestamp.");
+        });
 
-        var unocoinCall = callExchangeApi('GET', 'https://www.unocoin.com/trade?sell', 
+        var unocoinCall = callExchangeApi('GET', 'https://www.unocoin.com/trade?sell',
             '', unocoinSuccess, unocoinError);
-        unocoinCall.always(function(){
+        unocoinCall.done(function () {
             $("#unocoinSell").html(sellPrices.unocoinSell);
             $("#unocoinDateTime").html(times.unocoinTime);
         });
-        
-        var coinsecureCall = callExchangeApi('GET', 'https://api.coinsecure.in/v1/exchange/bid/high', 
+        unocoinCall.fail(function () {
+            $("#unocoinSell").html("Error getting Unocoin price data.");
+            $("#unocoinDateTime").html("Error getting Unocoin timestamp.");
+        });
+        var coinsecureCall = callExchangeApi('GET', 'https://api.coinsecure.in/v1/exchange/bid/high',
             '', coinsecureSuccess, coinsecureError);
-        coinsecureCall.always(function(){
+        coinsecureCall.done(function () {
             $("#coinsecureSell").html(sellPrices.coinsecureSell);
             $("#coinsecureDateTime").html(times.coinsecureTime);
         });
-
-    }, 120);
+        coinsecureCall.fail(function () {
+            $("#coinsecureSell").html("Error getting Coinsecure price data.");
+            $("#coinsecureDateTime").html("Error getting Coinsecure timestamp.");
+        });
+    }
+    getApiData();
+    window.setInterval(function () {
+        getApiData();
+    }, 5000);
 });
 
-$("button").click(function(){
+$("button").click(function () {
     //export the data from the html table element into a file
     var table;
-    if(!exportClicked){
+    if (!exportClicked) {
         table = $("table").tableExport();
-        exportClicked = true;        
+        exportClicked = true;
     }
-    else{
+    else {
         table.reset();
         table = $("table").tableExport();
     }
