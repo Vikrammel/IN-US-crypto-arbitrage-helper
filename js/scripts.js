@@ -12,13 +12,28 @@ function coinbaseSuccess(responseData){
 }
 
 function coinbaseError(){
-    buyPrices.coinbaseBuy = "coinbase price GET error";
-    times.coinbaseTime = "coinbase time GET error";
+    if (buyPrices.coinbaseBuy.length < 1){
+        buyPrices.coinbaseBuy = "coinbase price GET error";
+    }
+    else{
+        buyPrices.coinbaseBuy += " (stale)";        
+    }
+    if (times.coinbaseTime.length < 1){
+        times.coinbaseTime = "coinbase time GET error";
+    }
+    else{
+        times.coinbaseTime += " (stale)";        
+    }
 }
 
 function krakenPriceSuccess(responseData){
     if (responseData.error.length > 0){
-        buyPrices.krakenBuy = "errors retrieving price from kraken";
+        if (buyPrices.krakenBuy.length < 1){
+            buyPrices.krakenBuy = "errors retrieving price from kraken";
+        }
+        else{
+            buyPrices.krakenBuy += " (s-stale)"
+        }
     }
     else{
         buyPrices.krakenBuy = "$" + responseData.result.XXBTZUSD.a[0];                   
@@ -26,12 +41,22 @@ function krakenPriceSuccess(responseData){
 }
 
 function krakenPriceError(){
-    buyPrices.krakenBuy = "kraken price GET error";
+    if (buyPrices.krakenBuy.length < 1){
+        buyPrices.krakenBuy = "kraken price GET error";
+    }
+    else{
+        buyPrices.krakenBuy += " (stale)";        
+    }
 }
 
 function krakenTimeSuccess(responseData){
     if (responseData.error.length > 0){
-        times.krakenTime = "errors retrieving time from kraken";
+        if (times.krakenTime.length < 1){
+            times.krakenTime = "errors retrieving time from kraken";
+        }
+        else{
+            times.krakenTime += " (s-stale)";        
+        }
     }
     else{
         var krakenEpochSecs = responseData.result.unixtime;
@@ -46,7 +71,12 @@ function krakenTimeError(){
     // some reason some kraken time GET calls get in here, 
     // commenting out so it doesn't update old valid times with an error string, 
     // instead indicate time is old
-    times.krakenTime += " (timestamp stale)";
+    if (times.krakenTime.length < 1){
+        times.krakenTime = "kraken time GET error";
+    }
+    else{
+        times.krakenTime += " (stale)";        
+    }
 }
 
 function geminiSuccess(responseData){
@@ -59,8 +89,18 @@ function geminiSuccess(responseData){
 }
 
 function geminiError(){
-    buyPrices.geminiBuy = "gemini price GET error";
-    times.geminiTime = "gemini time GET error";
+    if (buyPrices.geminiBuy.length < 1){
+        buyPrices.geminiBuy = "gemini price GET error";
+    }
+    else{
+        buyPrices.geminiBuy += " (stale)";        
+    }
+    if (times.geminiTime.length < 1){
+        times.geminiTime = "gemini time GET error";
+    }
+    else{
+        times.geminiTime += " (stale)";        
+    }
 }
 
 function zebpaySuccess(responseData){
@@ -70,8 +110,18 @@ function zebpaySuccess(responseData){
 }
 
 function zebpayError(){
-    sellPrices.zebpaySell = "zebpay price GET error";
-    times.zebpayTime = "zebpay time GET error";
+    if (sellPrices.zebpaySell.length < 1){
+        sellPrices.zebpaySell = "zebpay price GET error";
+    }
+    else{
+        sellPrices.zebpaySell += " (stale)";        
+    }
+    if (times.zebpayTime.length < 1){
+        times.zebpayTime = "zebpay time GET error";
+    }
+    else{
+        times.zebpayTime += " (stale)";        
+    }
 }
 
 function unocoinSuccess(responseData){
@@ -81,8 +131,18 @@ function unocoinSuccess(responseData){
 }
 
 function unocoinError(){
-    sellPrices.unocoinSell = "unocoin price GET error";
-    times.unocoinTime = "unocoin time GET error";
+    if (sellPrices.unocoinSell.length < 1){
+        sellPrices.unocoinSell = "unocoin price GET error";
+    }
+    else{
+        sellPrices.unocoinSell += " (stale)";        
+    }
+    if (times.unocoinTime.length < 1){
+        times.unocoinTime = "unocoin time GET error";
+    }
+    else{
+        times.unocoinTime += " (stale)";        
+    }
 }
 
 function coinsecureSuccess(responseData){
@@ -93,8 +153,18 @@ function coinsecureSuccess(responseData){
 }
 
 function coinsecureError(){
-    sellPrices.coinsecureSell = "coinsecure price GET error";
-    times.coinsecureTime = "coinsecure time GET error";
+    if (sellPrices.coinsecureSell.length < 1){
+        sellPrices.coinsecureSell = "coinsecure price GET error";
+    }
+    else{
+        sellPrices.coinsecureSell += " (stale)";        
+    }
+    if (times.coinsecureTime.length < 1){
+        times.coinsecureTime = "coinsecure time GET error";
+    }
+    else{
+        times.coinsecureTime += " (stale)";        
+    }
 }
 
 //wrapper for ajax request so enchance readability in the $(document).ready() function
