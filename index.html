@@ -3,11 +3,9 @@
 
     <head>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/tableexport.min.css">        
         <link rel="stylesheet" href="css/style.css">
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+        
         <title>Arbitrage Helper</title>
     </head>
 
@@ -59,7 +57,15 @@
             <button class="button active" style="vertical-align:middle"><span>Export Spreadsheet</span></button>
         </div>
 
-        <script src="js/scripts.js"></script>        
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!-- add the shim first -->
+        <script type="text/javascript" src="js/js-xlsx/shim.min.js"></script>
+        <!-- after the shim is referenced, add the xlsx library for ms excel support -->
+        <script type="text/javascript" src="js/js-xlsx/xlsx.core.min.js"></script>
+        <script type="text/javascript" src ="js/fileSaver.min.js"></script>
+        <script type="text/javascript" src ="js/tableexport.min.js"></script>
+        <script type="text/javascript" src="js/scripts.js"></script>        
     </body>
 
 </html>

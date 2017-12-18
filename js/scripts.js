@@ -1,6 +1,8 @@
+//scripts.js
 var buyPrices = {}; //dictionary of buy prices
 var sellPrices = {}; //dictionary of sell prices
 var times = {}; //dictionary of server times (or local time substitutes)
+var exportClicked = false; //track if user has clicked export button
 
 //functions to define behavior in the case of success/failure of specific requests
 function coinbaseSuccess(responseData){
@@ -84,6 +86,7 @@ function coinsecureError(){
     times.coinsecureTime = "coinsecure time GET error";
 }
 
+//wrapper for ajax request so enchance readability in the $(document).ready() function
 function callExchangeApi(type, url, dataType, success, error){
     return $.ajax({
         type: type,
@@ -98,7 +101,7 @@ function callExchangeApi(type, url, dataType, success, error){
 $(document).ready(function() {
     window.setInterval(function() {
         //in here, get buy price (sometimes called 'lowest Ask') and 
-        //sell price ('highest bid') from relevant APIs using OAuth if necessary
+        //sell price ('highest bid') from relevant APIs
         //and get time from API usually as field "unixtime" in response JSON object
         //store this data in relevant variables at top of this file
         //load results into relevant HTML elements
@@ -154,6 +157,14 @@ $(document).ready(function() {
 });
 
 $("button").click(function(){
-    //export to spreadsheet code here
-    //export the data from the vars at the top of this file into a .csv(or .xls if there's an easy way to it) file
+    //export the data from the html table element into a file
+    var table;
+    if(!exportClicked){
+        table = $("table").tableExport();
+        exportClicked = true;        
+    }
+    else{
+        table.reset();
+        table = $("table").tableExport();
+    }
 });
