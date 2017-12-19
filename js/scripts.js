@@ -110,25 +110,25 @@ function zebpayError(){
     }
 }
 
-function unocoinSuccess(responseData){
-    sellPrices.unocoinSell = "Rs." + responseData;
+function koinexSuccess(responseData){
+    sellPrices.koinexSell = "Rs." + responseData.prices.BTC;
     var d = new Date();
-    times.unocoinTime = d;
+    times.koinexTime = d;
 }
 
-function unocoinError(){
-    if(!sellPrices.unocoinSell || sellPrices.unocoinSell.length < 1){
-        sellPrices.unocoinSell = "unocoin price GET error";
+function koinexError(){
+    if(!sellPrices.koinexSell || sellPrices.koinexSell.length < 1){
+        sellPrices.koinexSell = "koinex price GET error";
     }
-    if(!times.unocoinTime || times.unocoinTime.length < 1){
-        times.unocoinTime = "unocoin time GET error";
+    if(!times.koinexTime || times.koinexTime.length < 1){
+        times.koinexTime = "koinex time GET error";
     }
 }
 
 function coinsecureSuccess(responseData){
     //divide rate by 100, last 2 digits are paise
-    sellPrices.coinsecureSell = "Rs." + float(data.message.rate)/100.00;
-    times.coinsecureTime = data.time;
+    sellPrices.coinsecureSell = "Rs." + float(responseData.message.rate)/100.00;
+    times.coinsecureTime = responseData.time;
     //TODO: convert to rfc1123
 }
 
@@ -193,19 +193,19 @@ function getExchangeData(){
         $("#zebpayTime").html(times.zebpayTime);
     });
 
-    // var unocoinCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://www.unocoin.com/trade?sell', 
-    //     {'Access-Control-Allow-Origin': '*'}, 'json', unocoinSuccess, unocoinError);
-    // unocoinCall.always(function(){
-    //     $("#unocoinSell").html(sellPrices.unocoinSell);
-    //     $("#unocoinTime").html(times.unocoinTime);
-    // });
+    var koinexCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://koinex.in/api/ticker', 
+        {}, '', koinexSuccess, koinexError);
+    koinexCall.always(function(){
+        $("#koinexSell").html(sellPrices.koinexSell);
+        $("#koinexTime").html(times.koinexTime);
+    });
 
-    // var coinsecureCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://api.coinsecure.in/v1/exchange/bid/high', 
-    //     {'Access-Control-Allow-Origin': '*'}, '', coinsecureSuccess, coinsecureError);
-    // coinsecureCall.always(function(){
-    //     $("#coinsecureSell").html(sellPrices.coinsecureSell);
-    //     $("#coinsecureTime").html(times.coinsecureTime);
-    // });
+    var coinsecureCall = callExchangeApi('GET', 'https://cors-anywhere.herokuapp.com/https://api.coinsecure.in/v1/exchange/bid/high', 
+        {'Access-Control-Allow-Origin': '*'}, 'json', coinsecureSuccess, coinsecureError);
+    coinsecureCall.always(function(){
+        $("#coinsecureSell").html(sellPrices.coinsecureSell);
+        $("#coinsecureTime").html(times.coinsecureTime);
+    });
 }
 
 //--------------------------------------------------------------------------------------------------------------------
