@@ -21,13 +21,13 @@
 
 ### TO DO ###
 
-* ~~V1.0~~
+* **V1.0**
 * instead of making calls from front end jQuery, set up node backend server to make calls
 * get top 10-15 exchanges by volume integrated by API and look for differences in price while taking fees into account
 * if it's a good opportunity (above threshhold of 0.x% after fees or maybe 1.x%) display BUY <!crypto> on <!exchange> for <!price> and SELL on <!exchange> for <!price> for <!%profit> profit in <!currency>
 * if timestamps of prices that were used to find opportunity mismatch by more than 15s (idk might need adjustment) then add a warning that this info might be unreliable to the user for that opportunity displayed
 * somehow check something like the mean transaction time of crypto and signal whether it's a risky arbitrage opportunity if it's a long transaction time on the opportunity when displayed as well
 
-* ~~backlog~~
+* **backlog**
 * allow user to change native curency (default USD) to covert all prices to and check opportunities for? but also check for btc gains opportunities in addition to this native currency? more thought needs to be put into this feature
 * make routes for an api to report arbitrage opportunities to callers
