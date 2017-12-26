@@ -2,37 +2,57 @@
 <html lang="en">
 
     <head>
+	<!--meta tags for SEO-->
+	<meta charset='UTF-8'>
+
+	<meta name='keywords' content='Bitcoin, Ethereum, Monero, LiteCoin, Data Analysis, cryptocurreny prices, cryptocurrency price'>
+	<meta name='description' content='Arbitrage is a financial tool that helps compares data from the top cryptocurrency exchanges. It allows financial data to be directly downloaded to an excel spreadsheet, provides graphs to view price differentials and sends push notifications to keep you up to date on cryptocurrency prices.'>
+
+ 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/tableexport.min.css">        
+        <link rel="stylesheet" href="css/tableexport.min.css">
         <link rel="stylesheet" href="css/style.css">
-        
+	<link rel='stylesheet' type='text/css' href='./css/animate.css'>
+	
         <title>Arbitrage Helper</title>
     </head>
 
     <body>
-        <h1>Arbitrage Helper</h1>
+	<header>
+          <h1 class='animated fadeInDown'>Arbitrage Helper</h1>
+	</header>
+
+<form method='GET' onsubmit="">
+	<div id='btn-group-wrap'>
+	  <div id='currencies' class='btn-group'>
+		  <button class='btn btn-primary choice' type='button' id='btc'><span class='cryptocon'></span>Bitcoin</button>
+		  <button class='btn btn-primary choice' type='button' id='eth'><span class='cryptocon'></span>Ethereum</button>
+		  <button class='btn btn-primary choice' type='button' id='ltc'><span class='cryptocon'></span>LiteCoin</button>
+		  <button class='btn btn-primary choice' type='button' id='mon'><span class='cryptocon'></span>Monero</button>
+	  </div>
+	</div>
+</form>
         <br>
         <table class="table">
             <tr>
                 <th>Exchange</th>
-                <th>Price ($ USD)</th>
-                <!-- <th>Price (₹ Rupees)</th> -->
+                <th>Price</th>
                 <th>Date/Time</th>
             </tr>
             <tr id = "coinbase" class = "success">
                 <td>Coinbase</td>
                 <td id = "coinbaseBuy"></td>
-                <td id = "coinbaseTime"></td>
+                <td id = "coinbaseDateTime"></td>
             </tr>
             <tr id = "kraken" class = "success">
                 <td>Kraken</td>
                 <td id = "krakenBuy"></td>
-                <td id = "krakenTime"></td>
+                <td id = "krakenDateTime"></td>
             </tr>
             <tr id = "gemini" class = "success">
                 <td>Gemini</td>
                 <td id = "geminiBuy"></td>
-                <td id = "geminiTime"></td>
+                <td id = "geminiDateTime"></td>
             </tr>
 
             <tr class = "info"></tr>
@@ -40,23 +60,37 @@
             <tr id = "zebpay" class = "danger">
                 <td>ZebPay</td>
                 <td id = "zebpaySell"></td>
-                <td id = "zebpayTime"></td>
+                <td id = "zebpayDateTime"></td>
             </tr>
-            <tr id = "koinex" class = "danger">
-                <td>Koinex</td>
-                <td id = "koinexSell"></td>
-                <td id = "koinexTime"></td>
+            <tr id = "unocoin" class = "danger">
+                <td>Unocoin</td>
+                <td id = "unocoinSell"></td>
+                <td id = "unocoinDateTime"></td>
             </tr>
             <tr id = "coinsecure" class = "danger">
                 <td>CoinSecure</td>
                 <td id = "coinsecureSell"></td>
-                <td id = "coinsecureTime"></td>
+                <td id = "coinsecureDateTime"></td>
             </tr>
         </table>
-
+        
         <div id = "buttonWrap">
-            <button class="button active" style="vertical-align:middle"><span>Export Spreadsheet</span></button>
+            <button id='spreadsheet' class="button active" style="vertical-align:middle"><span>Export Spreadsheet</span></button>
         </div>
+	
+	<!--Line Charts Sections-->
+
+	<div id='charts'>
+	
+	  <h2>Realtime Exchange Data</h2>
+ 
+	  <canvas id='cbChart' class='chart' width=300 height=300 ></canvas>
+	  <canvas id='krakChart' class='chart' width=300 height=300></canvas>
+	  <canvas id='gemChart' class='chart' width=300 height=300></canvas>
+	  <canvas id='zebChart' class='chart' width=300 height=300></canvas>	
+
+
+	</div
 
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -66,7 +100,10 @@
         <script type="text/javascript" src="js/js-xlsx/xlsx.core.min.js"></script>
         <script type="text/javascript" src ="js/fileSaver.min.js"></script>
         <script type="text/javascript" src ="js/tableexport.min.js"></script>
-        <script type="text/javascript" src="js/scripts.js"></script>        
+        <script type="text/javascript" src="js/scripts.js"></script>
+
+	<!--Line Graph Scripts-->
+	<script type='text/javascript' src='./js/chart.js'></script>
     </body>
 
 </html>

@@ -1,0 +1,66 @@
+header h1{
+    text-align: center;
+}
+
+#buttonWrap{
+    display: flex;
+    align-content: center;
+}
+.button {
+    display: inline-block;
+    border-radius: 4px;
+    background-color: #70a0ff;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 18px;
+    padding: 5px;
+    width: 220px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.button span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+  
+.button span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+  
+.button:hover {
+    background-color: #4284ff;    
+}
+
+.button:hover span {
+    padding-right: 25px;
+}
+  
+.button:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+
+#btn-group-wrap{
+  text-align:center;
+}
+
+#currencies{
+  margin:0 auto;
+  width:400px;
+  margin-top:40px;
+  margin-bottom:40px;
+}
+.choice{
+  width:25%;
+}
