@@ -1,25 +1,16 @@
-# README #
+# README
 
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### What is this?
 
-### What is this repository for? ###
-
-* Crypto Arbitrage Helper - finds abritrage oppportunities for cryptos and notifies the user of them
+* Crypto Arbitrage Helper - helps find abritrage oppportunities between the US and India for cryptos
 * Version Alpha
 
-### How do I get set up? ###
+### How do I get set up?
 
-* git clone repo
+* `git clone <this repo's url>` or download contents of the repo
 * open index.html with a web browser from the root project directory
 
-### Contribution guidelines ###
-
-* always push new features to a branch unless another teammate has reviewed them, then merge to master when deemed complete
-* pull before pushing
-* good commenting and naming to describe what functions/vars do
-* try to care at least a little about efficiency while writing functions and algorithms (computational efficiency not so much code eficiency) since we are writing an arbitrage bot that should act reasonably fast
-
-### TO DO ###
+### TO DO (no longer in development)
 
 * **V1.0**
 * instead of making calls from front end jQuery, set up node backend server to make calls
